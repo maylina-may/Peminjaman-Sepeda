@@ -152,7 +152,7 @@ rfm_df["recency"] = rfm_df["max_borrow_date"].apply(lambda x: (recent_date - x).
 Menghapus kolom max_borrow_date
 rfm_df.drop("max_borrow_date", axis=1, inplace=True)
 
-            - Visualisasi Pelanggan Terbaik
+**Visualisasi Pelanggan Terbaik**
 
 import seaborn as sns
 
