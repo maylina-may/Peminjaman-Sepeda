@@ -23,7 +23,7 @@ Tahapan Analisis Data
 import pandas as pd
 
 # URL ke file CSV di GitHub
-csv_url = "https://raw.githubusercontent.com/maylina-may/Peminjaman-Sepeda/main/hour.csv"
+"https://github.com/maylina-may/Peminjaman-Sepeda/blob/main/hour.csv"
 
 # Membaca dataset dari URL
 data_df = pd.read_csv(csv_url)
