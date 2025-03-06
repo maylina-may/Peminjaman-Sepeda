@@ -1,1 +1,189 @@
-{"nbformat":4,"nbformat_minor":0,"metadata":{"colab":{"provenance":[],"authorship_tag":"ABX9TyPMx0RWf8mQRQ16dVOnABEJ"},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"cells":[{"cell_type":"markdown","source":["**Peminjaman-Sepeda**\n","\n"],"metadata":{"id":"MaATPU1cT26e"}},{"cell_type":"markdown","source":["**Deskripsi**\n"],"metadata":{"id":"LBRJptJyUGvM"}},{"cell_type":"markdown","source":["Proyek ini berupa dashboard streamlit yang dikembangkan untuk menganalisis kualitas Peminjaman Sepeda, menggunakan dataset (bike-sharing) yang telah disediakan oleh dicoding pada modul analisis data dengan python."],"metadata":{"id":"55Fi2gdeUOgD"}},{"cell_type":"markdown","source":["**Setup Environment - Anaconda**"],"metadata":{"id":"n0U0ZJHjUUr5"}},{"cell_type":"code","source":["conda activate bike-sharing-ds\n","pip install -r requirements.txt"],"metadata":{"id":"1idw1cyVU_0N"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["**Setup Environment - Shell/Terminal**"],"metadata":{"id":"g2PkSnLQVLdK"}},{"cell_type":"code","source":["mkdir proyek_analisis_data\n","cd proyek_analisis_data\n","\n","pipenv install\n","pipenv shell\n","\n","pip install -r requirements.txt"],"metadata":{"id":"sk45zWzaVNM5"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["**Menjalankan Aplikasi Streamlit**"],"metadata":{"id":"HmGS9w5VVZ3y"}},{"cell_type":"code","source":["streamlit run dashboard.py"],"metadata":{"id":"-Qq00J6JVdI2"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["**Tahapan Analisis Data**"],"metadata":{"id":"l1jSQXIfVgAg"}},{"cell_type":"markdown","source":["1. Memuat Dataset"],"metadata":{"id":"I70tNtfhV76e"}},{"cell_type":"code","source":["import pandas as pd\n","\n","# URL ke file CSV di GitHub\n","csv_url = \"https://raw.githubusercontent.com/maylina-may/Peminjaman-Sepeda/main/hour.csv\"\n","\n","# Membaca dataset dari URL\n","data_df = pd.read_csv(csv_url)"],"metadata":{"id":"uyOVzZaWV_VI"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["2. Menampilkan Data Awal"],"metadata":{"id":"AiGNDFCgV-pI"}},{"cell_type":"code","source":["# Menampilkan data\n","data_df.head()"],"metadata":{"id":"HpmdzIU6WFlL"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["3. Memeriksa Informasi Dataset"],"metadata":{"id":"Dq33gnEEWHXn"}},{"cell_type":"code","source":["# Melihat informasi tentang dataset\n","data_df.info()"],"metadata":{"id":"Z3rG7ojZWMDf"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["4. Mengecek Nilai yang Hilang dan Duplikasi"],"metadata":{"id":"NJ4P4RP1WM3X"}},{"cell_type":"code","source":["# Mengecek nilai yang hilang\n","missing_values = data_df.isnull().sum()\n","\n","# Memeriksa duplikasi data\n","duplicate_count = data_df.duplicated().sum()"],"metadata":{"id":"BcV23YLUWTUD"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["5. Membersihkan Data"],"metadata":{"id":"BdnBsYKaWWoZ"}},{"cell_type":"code","source":["# Menghapus semua baris yang memiliki nilai hilang\n","data_df.dropna(inplace=True)"],"metadata":{"id":"-4Pu_myoWZMO"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["6. Analisis Pertanyaan Bisnis"],"metadata":{"id":"61PbJO4pWboF"}},{"cell_type":"markdown","source":["- Pertanyaan 1: Apa hari dalam seminggu yang paling banyak peminjam sepeda?\n","\n"],"metadata":{"id":"Nud5HwkJWfHr"}},{"cell_type":"code","source":["# Menambahkan kolom hari dalam seminggu\n","data_df['dteday'] = pd.to_datetime(data_df['dteday'])\n","data_df['Day_Of_Week'] = data_df['dteday'].dt.day_name()\n","\n","# Menghitung jumlah peminjam sepeda berdasarkan hari\n","day_counts = data_df.groupby('Day_Of_Week')['cnt'].sum().reindex(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])"],"metadata":{"id":"B1DYzGhRWoC5"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["            - Visualisasi Pertanyaabn 1"],"metadata":{"id":"feGqvAkBWqeN"}},{"cell_type":"code","source":["import matplotlib.pyplot as plt\n","\n","# Visualisasi jumlah peminjam sepeda per hari dalam seminggu\n","plt.figure(figsize=(8, 5))\n","day_counts.plot(kind='bar', color='skyblue')\n","plt.title('Jumlah Peminjam Sepeda per Hari dalam Seminggu')\n","plt.xlabel('Hari')\n","plt.ylabel('Jumlah Peminjam')\n","plt.xticks(rotation=40)\n","plt.show()"],"metadata":{"id":"uP8imheNWwDI"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["- Pertanyaan 2: Bagaimana tren peminjaman sepeda per bulan?"],"metadata":{"id":"s16i9MwSW5BU"}},{"cell_type":"code","source":["# Menambahkan kolom bulan\n","data_df['Month'] = data_df['dteday'].dt.month_name()\n","\n","# Menghitung jumlah peminjam sepeda berdasarkan bulan\n","month_counts = data_df.groupby('Month')['cnt'].sum().reindex(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'])"],"metadata":{"id":"BUKA3aeaXWdU"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["            - Visualisasi Pertanyaan 2"],"metadata":{"id":"67_FU56JXY84"}},{"cell_type":"code","source":["# Visualisasi jumlah peminjam sepeda per bulan\n","plt.figure(figsize=(8, 5))\n","month_counts.plot(kind='bar', color='lightgreen')\n","plt.title('Jumlah Peminjam Sepeda per Bulan')\n","plt.xlabel('Bulan')\n","plt.ylabel('Jumlah Peminjam')\n","plt.xticks(rotation=40)\n","plt.show()"],"metadata":{"id":"6Yd1JG1mXcVH"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["- Pertanyaan 3: Bagaimana peminjaman sepeda berdasarkan musim?"],"metadata":{"id":"0aEvBQakXg9I"}},{"cell_type":"code","source":["# Menambahkan kolom musim\n","def get_season(month):\n","    if month in [12, 1, 2]:\n","        return 'Winter'\n","    elif month in [3, 4, 5]:\n","        return 'Spring'\n","    elif month in [6, 7, 8]:\n","        return 'Summer'\n","    else:\n","        return 'Fall'\n","\n","data_df['Season'] = data_df['dteday'].dt.month.apply(get_season)\n","\n","# Menghitung jumlah peminjam sepeda berdasarkan musim\n","season_counts = data_df.groupby('Season')['cnt'].sum()"],"metadata":{"id":"Wc8UG31nXh8X"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["            - Visualisasi Pertanyaan 3"],"metadata":{"id":"toBeXjH1XkGY"}},{"cell_type":"code","source":["# Visualisasi jumlah peminjam sepeda per musim\n","plt.figure(figsize=(8, 5))\n","season_counts.plot(kind='bar', color='salmon')\n","plt.title('Jumlah Peminjam Sepeda per Musim')\n","plt.xlabel('Musim')\n","plt.ylabel('Jumlah Peminjam')\n","plt.xticks(rotation=0)\n","plt.show()"],"metadata":{"id":"dvca00rKXoFX"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["7. Analisis RFM"],"metadata":{"id":"gd8i2a10Xp8B"}},{"cell_type":"markdown","source":["- Siapa pelanggan terbaik berdasarkan RFM?"],"metadata":{"id":"uAH5iz5hXzrV"}},{"cell_type":"code","source":["# Menghitung RFM\n","rfm_df = data_df.groupby(by=\"instant\", as_index=False).agg({\n","    \"dteday\": \"max\",  # Mengambil tanggal peminjaman terakhir\n","    \"cnt\": \"count\"    # Menghitung jumlah peminjaman\n","})\n","\n","rfm_df.columns = [\"instant\", \"max_borrow_date\", \"frequency\"]\n","\n","# Menghitung Recency\n","recent_date = data_df['dteday'].max()\n","rfm_df[\"recency\"] = rfm_df[\"max_borrow_date\"].apply(lambda x: (recent_date - x).days)\n","\n","# Menghapus kolom max_borrow_date\n","rfm_df.drop(\"max_borrow_date\", axis=1, inplace=True)"],"metadata":{"id":"tJV9sy0fX3TM"},"execution_count":null,"outputs":[]},{"cell_type":"markdown","source":["            - Visualisasi Pelanggan Terbaik"],"metadata":{"id":"WJtPiX_AX6Bq"}},{"cell_type":"code","source":["import seaborn as sns\n","\n","# Visualisasi pelanggan terbaik berdasarkan RFM\n","fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(30, 6))\n","\n","colors = [\"#72BCD4\"] * 5  # Warna untuk visualisasi\n","\n","# Visualisasi berdasarkan Recency\n","sns.barplot(y=\"recency\", x=\"instant\", data=rfm_df.sort_values(by=\"recency\", ascending=True).head(5), hue=\"instant\", palette=colors, dodge=False, ax=ax[0], legend=False)\n","ax[0].set_ylabel(None)\n","ax[0].set_xlabel(None)\n","ax[0].set_title(\"By Recency (days)\", loc=\"center\", fontsize=18)\n","ax[0].tick_params(axis='x', labelsize=15)\n","\n","# Visualisasi berdasarkan Frequency\n","sns.barplot(y=\"frequency\", x=\"instant\", data=rfm_df.sort_values(by=\"frequency\", ascending=False).head(5), hue=\"instant\", palette=colors, dodge=False, ax=ax[1], legend=False)\n","ax[1].set_ylabel(None)\n","ax[1].set_xlabel(None)\n","ax[1].set_title(\"By Frequency\", loc=\"center\", fontsize=18)\n","ax[1]. tick_params(axis='x', labelsize=15)\n","\n","        # Menghitung nilai 'monetary' (misalnya, total cnt untuk setiap instant)\n","        rfm_df['monetary'] = data_df.groupby('instant')['cnt'].sum().values\n","\n","        # Visualisasi berdasarkan Monetary\n","        sns.barplot(y=\"monetary\", x=\"instant\", data=rfm_df.sort_values(by=\"monetary\", ascending=False).head(5), hue=\"instant\", palette=colors, dodge=False, ax=ax[2], legend=False)\n","        ax[2].set_ylabel(None)\n","        ax[2].set_xlabel(None)\n","        ax[2].set_title(\"By Monetary\", loc=\"center\", fontsize=18)\n","        ax[2].tick_params(axis='x', labelsize=15)\n","\n","        plt.suptitle(\"Best Customers Based on RFM Parameters (instant)\", fontsize=20)\n","        plt.show()"],"metadata":{"id":"ytFh800ZYICn"},"execution_count":null,"outputs":[]}]}
+**Peminjaman-Sepeda**
+
+**Deskripsi**
+
+
+Proyek ini berupa dashboard streamlit yang dikembangkan untuk menganalisis kualitas Peminjaman Sepeda, menggunakan dataset (bike-sharing) yang telah disediakan oleh dicoding pada modul analisis data dengan python.
+
+**Setup Environment - Anaconda**
+
+conda activate bike-sharing-ds
+pip install -r requirements.txt
+
+**Setup Environment - Shell/Terminal**
+
+mkdir proyek_analisis_data
+cd proyek_analisis_data
+
+pipenv install
+pipenv shell
+
+pip install -r requirements.txt
+
+**Menjalankan Aplikasi Streamlit**
+
+streamlit run dashboard.py
+
+**Tahapan Analisis Data**
+
+1. Memuat Dataset
+
+import pandas as pd
+
+# URL ke file CSV di GitHub
+csv_url = "https://raw.githubusercontent.com/maylina-may/Peminjaman-Sepeda/main/hour.csv"
+
+# Membaca dataset dari URL
+data_df = pd.read_csv(csv_url)
+
+2. Menampilkan Data Awal
+
+# Menampilkan data
+data_df.head()
+
+3. Memeriksa Informasi Dataset
+
+# Melihat informasi tentang dataset
+data_df.info()
+
+4. Mengecek Nilai yang Hilang dan Duplikasi
+
+# Mengecek nilai yang hilang
+missing_values = data_df.isnull().sum()
+
+# Memeriksa duplikasi data
+duplicate_count = data_df.duplicated().sum()
+
+5. Membersihkan Data
+
+# Menghapus semua baris yang memiliki nilai hilang
+data_df.dropna(inplace=True)
+
+6. Analisis Pertanyaan Bisnis
+
+- Pertanyaan 1: Apa hari dalam seminggu yang paling banyak peminjam sepeda?
+
+
+
+# Menambahkan kolom hari dalam seminggu
+data_df['dteday'] = pd.to_datetime(data_df['dteday'])
+data_df['Day_Of_Week'] = data_df['dteday'].dt.day_name()
+
+# Menghitung jumlah peminjam sepeda berdasarkan hari
+day_counts = data_df.groupby('Day_Of_Week')['cnt'].sum().reindex(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+
+            - Visualisasi Pertanyaabn 1
+
+import matplotlib.pyplot as plt
+
+# Visualisasi jumlah peminjam sepeda per hari dalam seminggu
+plt.figure(figsize=(8, 5))
+day_counts.plot(kind='bar', color='skyblue')
+plt.title('Jumlah Peminjam Sepeda per Hari dalam Seminggu')
+plt.xlabel('Hari')
+plt.ylabel('Jumlah Peminjam')
+plt.xticks(rotation=40)
+plt.show()
+
+- Pertanyaan 2: Bagaimana tren peminjaman sepeda per bulan?
+
+# Menambahkan kolom bulan
+data_df['Month'] = data_df['dteday'].dt.month_name()
+
+# Menghitung jumlah peminjam sepeda berdasarkan bulan
+month_counts = data_df.groupby('Month')['cnt'].sum().reindex(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'])
+
+            - Visualisasi Pertanyaan 2
+
+# Visualisasi jumlah peminjam sepeda per bulan
+plt.figure(figsize=(8, 5))
+month_counts.plot(kind='bar', color='lightgreen')
+plt.title('Jumlah Peminjam Sepeda per Bulan')
+plt.xlabel('Bulan')
+plt.ylabel('Jumlah Peminjam')
+plt.xticks(rotation=40)
+plt.show()
+
+- Pertanyaan 3: Bagaimana peminjaman sepeda berdasarkan musim?
+
+# Menambahkan kolom musim
+def get_season(month):
+    if month in [12, 1, 2]:
+        return 'Winter'
+    elif month in [3, 4, 5]:
+        return 'Spring'
+    elif month in [6, 7, 8]:
+        return 'Summer'
+    else:
+        return 'Fall'
+
+data_df['Season'] = data_df['dteday'].dt.month.apply(get_season)
+
+# Menghitung jumlah peminjam sepeda berdasarkan musim
+season_counts = data_df.groupby('Season')['cnt'].sum()
+
+            - Visualisasi Pertanyaan 3
+
+# Visualisasi jumlah peminjam sepeda per musim
+plt.figure(figsize=(8, 5))
+season_counts.plot(kind='bar', color='salmon')
+plt.title('Jumlah Peminjam Sepeda per Musim')
+plt.xlabel('Musim')
+plt.ylabel('Jumlah Peminjam')
+plt.xticks(rotation=0)
+plt.show()
+
+7. Analisis RFM
+
+- Siapa pelanggan terbaik berdasarkan RFM?
+
+# Menghitung RFM
+rfm_df = data_df.groupby(by="instant", as_index=False).agg({
+    "dteday": "max",  # Mengambil tanggal peminjaman terakhir
+    "cnt": "count"    # Menghitung jumlah peminjaman
+})
+
+rfm_df.columns = ["instant", "max_borrow_date", "frequency"]
+
+# Menghitung Recency
+recent_date = data_df['dteday'].max()
+rfm_df["recency"] = rfm_df["max_borrow_date"].apply(lambda x: (recent_date - x).days)
+
+# Menghapus kolom max_borrow_date
+rfm_df.drop("max_borrow_date", axis=1, inplace=True)
+
+            - Visualisasi Pelanggan Terbaik
+
+import seaborn as sns
+
+# Visualisasi pelanggan terbaik berdasarkan RFM
+fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(30, 6))
+
+colors = ["#72BCD4"] * 5  # Warna untuk visualisasi
+
+# Visualisasi berdasarkan Recency
+sns.barplot(y="recency", x="instant", data=rfm_df.sort_values(by="recency", ascending=True).head(5), hue="instant", palette=colors, dodge=False, ax=ax[0], legend=False)
+ax[0].set_ylabel(None)
+ax[0].set_xlabel(None)
+ax[0].set_title("By Recency (days)", loc="center", fontsize=18)
+ax[0].tick_params(axis='x', labelsize=15)
+
+# Visualisasi berdasarkan Frequency
+sns.barplot(y="frequency", x="instant", data=rfm_df.sort_values(by="frequency", ascending=False).head(5), hue="instant", palette=colors, dodge=False, ax=ax[1], legend=False)
+ax[1].set_ylabel(None)
+ax[1].set_xlabel(None)
+ax[1].set_title("By Frequency", loc="center", fontsize=18)
+ax[1]. tick_params(axis='x', labelsize=15)
+
+        # Menghitung nilai 'monetary' (misalnya, total cnt untuk setiap instant)
+        rfm_df['monetary'] = data_df.groupby('instant')['cnt'].sum().values
+
+        # Visualisasi berdasarkan Monetary
+        sns.barplot(y="monetary", x="instant", data=rfm_df.sort_values(by="monetary", ascending=False).head(5), hue="instant", palette=colors, dodge=False, ax=ax[2], legend=False)
+        ax[2].set_ylabel(None)
+        ax[2].set_xlabel(None)
+        ax[2].set_title("By Monetary", loc="center", fontsize=18)
+        ax[2].tick_params(axis='x', labelsize=15)
+
+        plt.suptitle("Best Customers Based on RFM Parameters (instant)", fontsize=20)
+        plt.show()
